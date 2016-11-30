@@ -22,7 +22,7 @@ flush()
 
 query_result = google_places.nearby_search(
         location=location, keyword=place_type,
-        radius=20000, types=[types.TYPE_FOOD])
+        radius=10000, rankby='distance')
 
 
 for place in query_result.places:
