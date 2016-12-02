@@ -1,6 +1,7 @@
 from googleplaces import GooglePlaces, types, lang
 from random import randrange
 import sys
+import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -17,7 +18,38 @@ def choose_answer():
 def flush():
         sys.stdout.flush()
 
-def hangman():
+def hangman(phrase):
+    phrase_without_dash = phrase.replace("-", "")
+    phrase_final = phrase_without_dash.replace("/", "")
+    constructed_word = ''
+    fails_left = 10
+    end_game = False
+    print "\n Location Selected! Press any key to start your game of hangman!"
+    raw_input()
+    flush()
+    print "Start!\n"
+    time.sleep(1)
+    while fails_left > 0 or end_game == False:
+        print "Lives left:", fails_left
+        print "Please type your guess:"
+        guess = raw_input()
+        flush()
+        if guess not in phrase_final:
+            print "Guess incorrect."
+            fails_left = fails_left - 1
+        else:
+            for char in phrase_final:
+                if char not " ":
+                    if char == guess:
+                        print char
+                        constructed_word = constructed_word + char
+                    else:
+                        print "_"
+                        constructed_word = constructed_word + "_"
+        constructed_word = ''
+
+
+def get_hint():
     pass
 
 def get_phrases(result):
@@ -62,5 +94,7 @@ def Game():
         radius=12000, rankby='distance')
 
     phrase = get_phrases(query_result)
+
+    game_result = hangman(phrase)
 
 Game()
