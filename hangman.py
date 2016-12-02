@@ -1,4 +1,5 @@
 from googleplaces import GooglePlaces, types, lang
+from random import randrange
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -15,6 +16,21 @@ def choose_answer():
 
 def flush():
         sys.stdout.flush()
+
+def hangman():
+    pass
+
+def get_phrases(result):
+    phrases = []
+    print "Places found:\n"
+    for place in result.places:
+        current_phrase = place.name
+        print place.name
+        phrases.append(current_phrase)
+    phrase_index = randrange(0,len(phrases))
+    phrase = phrases[phrase_index]
+    print "Selected Word For Hangman:", phrase
+    return phrase
 
 def Game():
     print "WELCOME TO: Super Radical Hangman Go"
@@ -45,15 +61,6 @@ def Game():
         location=location, keyword=place_type,
         radius=12000, rankby='distance')
 
-
-    for place in query_result.places:
-        print "--"
-        print place.name
-        print place.geo_location
-        print place.place_id
-        print "\n"
-        place.get_details()
-        print place.website
-        print "\n"
+    phrase = get_phrases(query_result)
 
 Game()
