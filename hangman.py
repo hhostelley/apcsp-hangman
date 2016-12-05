@@ -21,32 +21,36 @@ def flush():
 def hangman(phrase):
     phrase_without_dash = phrase.replace("-", "")
     phrase_final = phrase_without_dash.replace("/", "")
-    constructed_word = ''
+    print phrase_final
+    constructed_word = []
+    for char in phrase_final:
+        constructed_word.append("_")
     fails_left = 10
     end_game = False
-    print "\n Location Selected! Press any key to start your game of hangman!"
-    raw_input()
+    blank = '_'
     flush()
+    print "\n Location Selected! Press any key to start your game of hangman!"
+    flush()
+    raw_input()
     print "Start!\n"
-    time.sleep(1)
     while fails_left > 0 or end_game == False:
-        print "Lives left:", fails_left
+        constructed_word = ''
+        print "\nLives left:", fails_left
         print "Please type your guess:"
+        flush()
         guess = raw_input()
         flush()
         if guess not in phrase_final:
-            print "Guess incorrect."
+            print "\nGuess incorrect."
             fails_left = fails_left - 1
+            constructed_word = ''
         else:
             for char in phrase_final:
-                if char not " ":
-                    if char == guess:
-                        print char
-                        constructed_word = constructed_word + char
-                    else:
-                        print "_"
-                        constructed_word = constructed_word + "_"
-        constructed_word = ''
+                if char == guess:
+                    constructed_word[char] = char
+                else:
+                    constructed_word[char] = blank
+            print "\n", constructed_word
 
 
 def get_hint():
@@ -54,7 +58,6 @@ def get_hint():
 
 def get_phrases(result):
     phrases = []
-    print "Places found:\n"
     for place in result.places:
         current_phrase = place.name
         print place.name
