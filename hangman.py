@@ -103,14 +103,17 @@ def Game():
     for places in query_result.places:
         length += 1
     phrase_index = randrange(0,length)
-    print query_result.places[phrase_index]
-    print "DONE"
+    search = query_result.places[phrase_index]
+    search_dict = search.geo_location
 
     now = datetime.now()
     directions_result = gmaps.directions(location,
-                                     'McDonalds',
+                                     search_dict,
                                      mode="driving",
                                      departure_time=now)
+
+    first_result = directions_result[0]
+    print first_result['summary']
 
     phrase = get_phrases(query_result, phrase_index)
 
