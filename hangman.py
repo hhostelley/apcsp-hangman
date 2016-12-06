@@ -113,7 +113,7 @@ def Game():
                                      departure_time=now)
 
     first_result = directions_result[0]
-    print first_result['summary']
+    print first_result['legs']
 
     phrase = get_phrases(query_result, phrase_index)
 
