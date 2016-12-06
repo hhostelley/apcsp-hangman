@@ -1,13 +1,16 @@
 from googleplaces import GooglePlaces, types, lang
 from random import randrange
+import googlemaps
+from datetime import datetime
 import sys
 import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-YOUR_API_KEY = 'AIzaSyCzUJbo-SRdXzrHX5FitEHDiPi071UNbgg'
+API_KEY = 'AIzaSyCzUJbo-SRdXzrHX5FitEHDiPi071UNbgg'
+gmaps = googlemaps.Client(key='AIzaSyDqmC_4c0wXpq6iWj-Z92M_AGxic2P0E8I')
 
-google_places = GooglePlaces(YOUR_API_KEY)
+google_places = GooglePlaces(API_KEY)
 
 def choose_answer():
     print "\nChoose a category: Fast Food(a), Stores(b), or Schools(c)"
@@ -56,20 +59,20 @@ def hangman(phrase):
 def get_hint():
     pass
 
-def get_phrases(result):
+def get_phrases(result, number):
     phrases = []
     for place in result.places:
         current_phrase = place.name
         print place.name
         phrases.append(current_phrase)
-    phrase_index = randrange(0,len(phrases))
+    phrase_index = number
     phrase = phrases[phrase_index]
     print "Selected Word For Hangman:", phrase
     return phrase
 
 def Game():
     print "WELCOME TO: Super Radical Hangman Go"
-    print "\nPlease input location (ex: 10585 Mountian Vista Ridge, Highlands Ranch, CO)"
+    print "\nPlease input location (ex: Highlands Ranch, CO)"
     flush()
     location = raw_input()
     flush()
@@ -96,7 +99,20 @@ def Game():
         location=location, keyword=place_type,
         radius=12000, rankby='distance')
 
-    phrase = get_phrases(query_result)
+    length = 0
+    for places in query_result.places:
+        length += 1
+    phrase_index = randrange(0,length)
+    print query_result.places[phrase_index]
+    print "DONE"
+
+    now = datetime.now()
+    directions_result = gmaps.directions(location,
+                                     'McDonalds',
+                                     mode="driving",
+                                     departure_time=now)
+
+    phrase = get_phrases(query_result, phrase_index)
 
     game_result = hangman(phrase)
 
