@@ -49,7 +49,7 @@ def hangman(phrase):
     guessed_letters = []
 
     flush()
-    print "\nLocation Selected! Press any key to start your game of hangman!"
+    print "\nLocation Selected! Press start to start your game of hangman!"
     flush()
     raw_input()
     print "Start!\n"
@@ -57,24 +57,27 @@ def hangman(phrase):
         print "\nLives left:", fails_left
         joined_word = "".join(constructed_word)
         print joined_word, "\n"
-        try:
-            print "Please type your guess (should be one letter, number, or symbol):"
-            flush()
-            guess = raw_input()
-            flush()
-            player_guess = guess.lower()
-        except:
-            print "That is not valid input. Please try again."
-            continue
-        else:
-            if len(player_guess) > 1:
-                print "That's more than one character. Try again."
-                continue
-            elif player_guess in guessed_letters:
-                print "You have already guessed that! Try again."
+        input = False
+        while input == False:
+            try:
+                print "Please type your guess (should be one letter, number, or symbol):"
+                flush()
+                guess = raw_input()
+                flush()
+                player_guess = guess.lower()
+            except:
+                print "That is not valid input. Please try again."
                 continue
             else:
-                pass
+                if len(player_guess) > 1:
+                    print "That's more than one character. Try again."
+                    continue
+                elif player_guess in guessed_letters:
+                    print "You have already guessed that! Try again."
+                    continue
+                else:
+                    input = True
+                    pass
 
         guessed_letters.append(player_guess)
 
@@ -87,10 +90,10 @@ def hangman(phrase):
             print "\nGuess not correct. Please try agian."
 
     if "_" not in constructed_word:
-        print "\nCongratulations! You won! The phrase was %r!" % phrase_final
+        print "\nCongratulations! You won! The phrase was %s!" % phrase_final
         return True
     else:
-        print "\nSorry :( You lost. The phrase was %r." % phrase_final
+        print "\nSorry :( You lost. The phrase was %s." % phrase_final
         return False
 
 def Main():
