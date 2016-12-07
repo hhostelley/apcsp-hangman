@@ -2,10 +2,13 @@ from googleplaces import GooglePlaces, types, lang
 from random import randrange
 import googlemaps
 from datetime import datetime
-import sys
 import time
+import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+def flush():
+        sys.stdout.flush()
 
 API_KEY = 'AIzaSyCzUJbo-SRdXzrHX5FitEHDiPi071UNbgg'
 gmaps = googlemaps.Client(key='AIzaSyDqmC_4c0wXpq6iWj-Z92M_AGxic2P0E8I')
@@ -17,44 +20,6 @@ def choose_answer():
     flush()
     answer = raw_input()
     return answer
-
-def flush():
-        sys.stdout.flush()
-
-def hangman(phrase):
-    phrase_without_dash = phrase.replace("-", "")
-    phrase_final = phrase_without_dash.replace("/", "")
-    print phrase_final
-    constructed_word = []
-    for char in phrase_final:
-        constructed_word.append("_")
-    fails_left = 10
-    end_game = False
-    blank = '_'
-    flush()
-    print "\n Location Selected! Press any key to start your game of hangman!"
-    flush()
-    raw_input()
-    print "Start!\n"
-    while fails_left > 0 or end_game == False:
-        constructed_word = ''
-        print "\nLives left:", fails_left
-        print "Please type your guess:"
-        flush()
-        guess = raw_input()
-        flush()
-        if guess not in phrase_final:
-            print "\nGuess incorrect."
-            fails_left = fails_left - 1
-            constructed_word = ''
-        else:
-            for char in phrase_final:
-                if char == guess:
-                    constructed_word[char] = char
-                else:
-                    constructed_word[char] = blank
-            print "\n", constructed_word
-
 
 def get_hint():
     pass
@@ -70,8 +35,66 @@ def get_phrases(result, number):
     print "Selected Word For Hangman:", phrase
     return phrase
 
-def Game():
-    print "WELCOME TO: Super Radical Hangman Go"
+def hangman(phrase):
+    start_phrase = phrase
+    phrase_no_spaces = start_phrase.replace(" ", "")
+    phrase_no_dashes = phrase_no_spaces.replace("/", "")
+    phrase_no_slashes = phrase_no_dashes.replace("-", "")
+    phrase_final = phrase_no_slashes.lower()
+    print phrase_final
+    constructed_word = []
+    for char in phrase_final:
+        constructed_word.append("_")
+    fails_left = 10
+    guessed_letters = []
+
+    flush()
+    print "\nLocation Selected! Press any key to start your game of hangman!"
+    flush()
+    raw_input()
+    print "Start!\n"
+    while fails_left != 0 and "_" in constructed_word:
+        print "\nLives left:", fails_left
+        joined_word = "".join(constructed_word)
+        print joined_word, "\n"
+        try:
+            print "Please type your guess (should be one letter, number, or symbol):"
+            flush()
+            guess = raw_input()
+            flush()
+            player_guess = guess.lower()
+        except:
+            print "That is not valid input. Please try again."
+            continue
+        else:
+            if len(player_guess) > 1:
+                print "That's more than one character. Try again."
+                continue
+            elif player_guess in guessed_letters:
+                print "You have already guessed that! Try again."
+                continue
+            else:
+                pass
+
+        guessed_letters.append(player_guess)
+
+        for letter in range(len(phrase_final)):
+            if player_guess == phrase_final[letter]:
+                constructed_word[letter] = player_guess
+
+        if player_guess not in phrase_final:
+            fails_left = fails_left - 1
+            print "\nGuess not correct. Please try agian."
+
+    if "_" not in constructed_word:
+        print "\nCongratulations! You won! The phrase was %r!" % phrase_final
+        return True
+    else:
+        print "\nSorry :( You lost. The phrase was %r." % phrase_final
+        return False
+
+def Main():
+    print "WELCOME TO: Super Radical Hangman"
     print "\nPlease input location (ex: Highlands Ranch, CO)"
     flush()
     location = raw_input()
@@ -119,4 +142,4 @@ def Game():
 
     game_result = hangman(phrase)
 
-Game()
+Main()
