@@ -1,6 +1,8 @@
 from googleplaces import GooglePlaces, types, lang
 from random import randrange
 import googlemaps
+from googlemaps import convert
+from googlemaps.convert import as_list
 from datetime import datetime
 import time
 import sys
@@ -21,27 +23,22 @@ def choose_answer():
     answer = raw_input()
     return answer
 
-def get_hint():
-    pass
 
 def get_phrases(result, number):
     phrases = []
     for place in result.places:
         current_phrase = place.name
-        print place.name
         phrases.append(current_phrase)
     phrase_index = number
     phrase = phrases[phrase_index]
-    print "Selected Word For Hangman:", phrase
     return phrase
 
-def hangman(phrase):
+def hangman(phrase, duration, distance, street):
     start_phrase = phrase
     phrase_no_spaces = start_phrase.replace(" ", "")
     phrase_no_dashes = phrase_no_spaces.replace("/", "")
     phrase_no_slashes = phrase_no_dashes.replace("-", "")
     phrase_final = phrase_no_slashes.lower()
-    print phrase_final
     constructed_word = []
     for char in phrase_final:
         constructed_word.append("_")
@@ -87,7 +84,15 @@ def hangman(phrase):
 
         if player_guess not in phrase_final:
             fails_left = fails_left - 1
-            print "\nGuess not correct. Please try agian."
+            print "\nGuess not correct. Please try again."
+            if_hint = randrange(0, 12)
+            if if_hint == 5:
+                print "Here's a hint: Your location is %s away!" % distance
+            if if_hint == 7:
+                    print "Here's a hint: Your location is %s away!" % duration
+            if if_hint == 11:
+                print "Here's a hint: it's located on %s!" % street
+
 
     if "_" not in constructed_word:
         print "\nCongratulations! You won! The phrase was %s!" % phrase_final
@@ -131,18 +136,26 @@ def Main():
     phrase_index = randrange(0,length)
     search = query_result.places[phrase_index]
     search_dict = search.geo_location
-
+    search.get_details()
+    street = search.formatted_address
     now = datetime.now()
-    directions_result = gmaps.directions(location,
+    directions_result = gmaps.distance_matrix(location,
                                      search_dict,
                                      mode="driving",
                                      departure_time=now)
 
-    first_result = directions_result[0]
-    print first_result['legs']
+    directions_keys = directions_result['rows']
+    directions_row_1 = directions_keys[0]
+    directions_keys_elements = directions_row_1['elements']
+    directions_keys_text = directions_keys_elements[0]
+    directions_keys_duration = directions_keys_text['duration']
+    directions_keys_distance = directions_keys_text['distance']
+
+    duration = directions_keys_duration['text']
+    distance = directions_keys_distance['text']
 
     phrase = get_phrases(query_result, phrase_index)
 
-    game_result = hangman(phrase)
+    game_result = hangman(phrase, duration, distance, street)
 
 Main()
