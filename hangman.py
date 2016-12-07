@@ -46,7 +46,7 @@ def hangman(phrase, duration, distance, street):
     guessed_letters = []
 
     flush()
-    print "\nLocation Selected! Press start to start your game of hangman!"
+    print "\nLocation Selected! Press enter to start your game of hangman!"
     flush()
     raw_input()
     print "Start!\n"
